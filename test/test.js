@@ -119,9 +119,9 @@ describe("archive helpers", function(){
     });
   });
 
-  xdescribe("#isUrlArchived", function () {
+  describe("#isUrlArchived", function () {
     it("should check if a url is archived", function (done) {
-      fs.writeFileSync(archive.paths.archivedSites + "/www.example.com", "blah blah");
+      fs.writeFileSync(archive.paths.archivedSites + "/www.example.com", "<html></html>");
 
       var counter = 0;
       var total = 2;
@@ -138,7 +138,7 @@ describe("archive helpers", function(){
     });
   });
 
-  xdescribe("#downloadUrls", function () {
+  describe("#downloadUrls", function () {
     it("should download all pending urls in the list", function (done) {
       var urlArray = ["www.example.com", "www.google.com"];
       archive.downloadUrls(urlArray);
