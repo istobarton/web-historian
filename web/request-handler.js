@@ -35,7 +35,11 @@ exports.handleRequest = function (req, res) {
     req.on('end', function() {
       archive.addUrlToList(str.slice(4), function(){
         res.writeHead(302);
-        res.end();
+        fs.readFile(archive.paths.siteAssets + '/loading.html', function(err, data) {
+          if(err) throw err;
+          res.end(data);
+          //console.log(data);
+        });
       })
     })
   }
