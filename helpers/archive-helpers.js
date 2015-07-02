@@ -33,6 +33,7 @@ exports.readListOfUrls = function(callback) {
   fs.readFile(exports.paths.list, function(err, data){
     // data === "example1.com'\n'example2.com"
     urls = data.toString().split("\n");
+    urls = urls.filter(function(val) {return val.length});
     callback(urls);
   })
 
@@ -76,21 +77,29 @@ exports.isUrlArchived = function(url, callback) {
 
 };
 
+exports.downloadUrl = function(url){
+  http.get("http://" + url, function(res) {
+    var str = "";
+    res.on('data', function(chunk) {
+      str += chunk;
+    })
+    res.on('end', function() {
+      fs.writeFile(exports.paths.archivedSites + "/" + url, str, function(err){
+        if (err) throw err;
+      })
+    })
+  }).on('error', function(e) {
+    console.log("Got error: " + e.message);
+  });
+}
+
 exports.downloadUrls = function(urlsArray) {
   urlsArray.forEach(function(url){
-    http.get("http://" + url, function(res) {
-      var str = "";
-      res.on('data', function(chunk) {
-        str += chunk;
-      })
-      res.on('end', function() {
-        fs.writeFile(exports.paths.archivedSites + "/" + url, str, function(err){
-          if (err) throw err;
-        })
-      })
-    }).on('error', function(e) {
-      console.log("Got error: " + e.message);
-    });
+    exports.isUrlArchived(url, function(bool){
+      if(!bool){
+        exports.downloadUrl(url)
+      }
+    })
   })
 };
 
